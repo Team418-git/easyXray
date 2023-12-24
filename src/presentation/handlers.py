@@ -11,10 +11,12 @@ from aiogram import flags
 
 import src.presentation.kb as kb
 import src.presentation.text as text
-from src.presentation.states import Gen, Del, GenConf, DelConf
+from src.presentation.callbacks import ClientCallback
+from src.presentation.states import Gen, Del, GenConf, DelConf, ConfMenu
 
 router = Router()
 admin_id = getenv("ADMIN_TELEGRAM_ID")
+
 
 @router.message(Command("start"))
 async def start_handler(msg: Message, state: FSMContext):
@@ -37,13 +39,13 @@ async def menu_handler(clbck: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == "get_instructions")
 async def get_instructions(clbck: CallbackQuery):
-    await clbck.message.answer(text=text.instructions, reply_markup=kb.instruction_menu)
+    await clbck.message.answer(text.instructions, reply_markup=kb.iexit_kb)
 
 
 @router.callback_query(F.data == "add_client")
 async def add_client(clbck: CallbackQuery, state: FSMContext):
     if clbck.from_user.username == admin_id:
-        await clbck.message.answer(text=text.client_id_await, reply_markup=kb.iexit_kb)
+        await clbck.message.answer(text.client_id_await, reply_markup=kb.iexit_kb)
         await state.set_state(Gen().typing_telegram_id)
 
 
@@ -68,7 +70,6 @@ async def get_limit(msg: Message, state: FSMContext):
             user_data = await state.get_data()
             tg_id = user_data['chosen_id']
             User().create(user_id=tg_id, limit=limit)
-            await msg.answer(text.user_is_created, reply_markup=kb.iexit_kb)
             await state.clear()
 
 
@@ -83,8 +84,12 @@ async def add_client(clbck: CallbackQuery, state: FSMContext):
 async def delete_telegram_id(msg: Message, state: FSMContext):
     if msg.from_user.username == admin_id:
         tg_id = msg.text
-        User().delete(user_id=tg_id)
-        await state.clear()
+        if not tg_id.isnumeric() or len(tg_id) != 9:
+            await state.clear()
+            return await msg.answer(text.telegram_id_error, reply_markup=kb.iexit_kb)
+        else:
+            User().delete(user_id=tg_id)
+            await state.clear()
 
 
 @router.callback_query(F.data == "create_config")
@@ -100,60 +105,44 @@ async def add_config(clbck: CallbackQuery):
     await clbck.message.answer(text=uri, reply_markup=kb.iexit_kb)
 
 
+@router.callback_query(F.data == "conf_list")
+async def config_list(clbck: kb.PageCallbackFactory):
+    await kb.show_items_page(clbck)
+
+
+@router.callback_query(kb.PageCallbackFactory.filter(F.action.in_(["prev", "next"])))
+async def query_page(callback_query: kb.PageCallbackFactory, callback_data: kb.PageCallbackFactory):
+    current_page = int(callback_data.page)
+    action = callback_data.action
+    if action == "prev":
+        page = current_page - 1
+    elif action == "next":
+        page = current_page + 1
+    else:
+        page = current_page
+    if page != current_page:
+        await kb.show_items_page(callback_query, page)
+    else:
+        await callback_query.answer('Вы уже на этой странице!')
+
+
+@router.callback_query(kb.EmailCallbackFactory.filter())
+async def query_item(callback_query: CallbackQuery, callback_data: kb.EmailCallbackFactory):
+    email = callback_data.email
+    await callback_query.message.answer(Client().get(email).conn_str)
+
+
+@router.callback_query(F.data == "get_config")
+async def get_conf(clbck: CallbackQuery, state: FSMContext):
+    client_data = await state.get_data()
+    client_id = client_data['client_id']
+    client = Client().get(client_id)
+    await clbck.message.answer(text=client.conn_str, reply_markup=kb.iexit_kb)
+
+
 @router.callback_query(F.data == "delete_config")
 async def delete_config(clbck: CallbackQuery, state: FSMContext):
-    user_id = str(clbck.from_user.username)
-    if User().get(user_id) is None:
-        return await clbck.message.answer(text.user_not_defined, reply_markup=kb.iexit_kb)
-    if not User().allowed_to_create_client(user_id):
-        return await clbck.message.answer(text.user_limit_exited, reply_markup=kb.iexit_kb)
-    await clbck.message.answer(text.config_id_await, reply_markup=kb.iexit_kb)
-    await state.set_state(DelConf().typing_conf_id)
-
-
-@router.message(DelConf.typing_conf_id)
-async def delete_config_id(msg: Message, state: FSMContext):
-    conf_id = msg.text
-    if not conf_id.isalnum():
-        await state.clear()
-        return await msg.answer(text.config_id_error, reply_markup=kb.iexit_kb)
-    else:
-        client_id = msg.text
-        if Client().get(client_id) is None:
-            return await msg.answer(text.client_not_defined, reply_markup=kb.iexit_kb)
-        Client().delete(client_id=client_id)
-        await state.clear()
-        await msg.answer(text.config_is_deleted, reply_markup=kb.iexit_kb)
-
-
-@router.callback_query(F.data == "conf_list")
-async def add_config(clbck: CallbackQuery):
-    user_id = clbck.from_user.username
-    client_ids = Client().get_by_user(str(user_id))
-    if client_ids is None or not client_ids:
-        return await clbck.message.answer(text=text.configs_not_found)
-    for client_id in client_ids:
-        client = Client().get(client_id)
-        uri = client.conn_str
-        await clbck.message.answer(text=uri)
-
-
-@router.callback_query(F.data == "instruction_ios")
-async def get_ios_instruction(clbck: CallbackQuery):
-    await clbck.message.answer(text=text.instruction_ios, reply_markup=kb.iexit_kb)
-
-
-@router.callback_query(F.data == "instruction_android")
-async def get_android_instruction(clbck: CallbackQuery):
-    await clbck.message.answer(text=text.instruction_android, reply_markup=kb.iexit_kb)
-
-
-@router.callback_query(F.data == "instruction_macos")
-async def get_macos_instruction(clbck: CallbackQuery):
-    await clbck.message.answer(text=text.instruction_macos, reply_markup=kb.iexit_kb)
-
-
-@router.callback_query(F.data == "instruction_windows")
-async def get_windows_instruction(clbck: CallbackQuery):
-    await clbck.message.answer(text=text.instruction_windows, reply_markup=kb.iexit_kb)
-
+    client_data = await state.get_data()
+    client_id = client_data['client_id']
+    Client().delete(client_id)
+    await clbck.message.answer(text=text.config_is_deleted, reply_markup=kb.iexit_kb)

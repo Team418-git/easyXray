@@ -10,29 +10,17 @@ class ClientConfig:
         self.__create_clients_table()
         return
 
-    def get_by_user(self, user_id: Optional[str], offset: int = 0, limit: int = 20) -> List[ClientDTO]:
+    def get_by_user(self, user_id: str) -> List[ClientDTO]:
         query = '''
-        SELECT * FROM clients WHERE user_id = ? OFFSET ? LIMIT ?
-        '''
-
-        res = self.__con.cursor().execute(
-            query,
-            (user_id, offset, limit)
-        ).fetchall()
-
-        return [ClientDTO(**{'id': e[0], 'user_id': e[1]}) for e in res]
-
-    def count_by_user(self, user_id: Optional[str]) -> int:
-        query = '''
-        SELECT count(*) FROM clients WHERE user_id = ?
+        SELECT * FROM clients WHERE user_id = ?
         '''
 
         res = self.__con.cursor().execute(
             query,
             (user_id,)
-        ).fetchone()
+        ).fetchall()
 
-        return res[0]
+        return [ClientDTO(**{'id': e[0], 'user_id': e[1]}) for e in res]
 
     def get(self, client_id: str) -> Optional[ClientDTO]:
         query = '''
@@ -48,14 +36,12 @@ class ClientConfig:
 
         return ClientDTO(**{'id': res[0], 'user_id': res[1]})
 
-    def create(self, client_id: str, user_id: Optional[str], comment: Optional[str]) -> None:
+    def create(self, client_id: str, user_id: str) -> None:
         query = '''
-        INSERT OR REPLACE INTO clients VALUES (?, ?, ?)
+        INSERT OR REPLACE INTO clients VALUES (?, ?)
         '''
 
-        self.__con.cursor().execute(query, (
-            client_id, user_id, comment
-        ))
+        self.__con.cursor().execute(query, (client_id, user_id))
 
         self.__con.commit()
         return
@@ -75,8 +61,7 @@ class ClientConfig:
             '''
             CREATE TABLE IF NOT EXISTS clients (
                 ID      TEXT PRIMARY KEY NOT NULL, 
-                USER_ID TEXT
-                COMMENT TEXT
+                USER_ID TEXT             NOT NULL
                 );
             '''
         )
