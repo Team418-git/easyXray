@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   3x-ui:
-    image: ghcr.io/mhsanaei/3x-ui:latest
+    image: ghcr.io/mhsanaei/3x-ui:v1.7.8
     container_name: 3x-ui
     labels:
       - "traefik.enable=true"
