@@ -92,27 +92,27 @@ function check_inbounds_table() {
     fi
 }
 
-#Check for existing team_418 folder and clones repo (testing) with wget
+#Check for existing easyXray folder and clones repo (testing) with wget
 function clone_repo() {
-    if [[ -d "team_418" ]]; then
-        cd team_418 || exit
+    if [[ -d "easyXray" ]]; then
+        cd easyXray || exit
         # Here you might want to fetch and unzip again or just rely on the existing content.
         # We're assuming that you want to fetch the newest content. 
         # So we'll remove the old files, fetch the new .zip and then unzip.
         rm -rf *
         wget https://github.com/Team418-git/easyXray/archive/refs/heads/main.zip
         unzip main.zip
-        mv team418-main/* .
-        rm -rf team418-main main.zip
-		echo -e "\e[34m team418 repository has been cloned\e[0m"
+        mv easyXray-main/* .
+        rm -rf easyXray-main main.zip
+		echo -e "\e[34m easyXray repository has been cloned\e[0m"
     else
         wget https://github.com/Team418-git/easyXray/archive/refs/heads/main.zip
         unzip main.zip
-        mkdir -p team_418
-        mv team418-main/* team_418/
-        cd team_418 || exit
-        rm -rf ../team418-main ../testing.zip
-		echo -e "\e[34m team418 repository has been cloned\e[0m"
+        mkdir -p easyXray
+        mv easyXray-main/* easyXray/
+        cd easyXray || exit
+        rm -rf ../easyXray-main ../testing.zip
+		echo -e "\e[34m easyXray repository has been cloned\e[0m"
     fi
 }
 
