@@ -100,13 +100,13 @@ function clone_repo() {
         # We're assuming that you want to fetch the newest content. 
         # So we'll remove the old files, fetch the new .zip and then unzip.
         rm -rf *
-        wget https://github.com/torikki-tou/team418/archive/refs/heads/main.zip
+        wget https://github.com/Team418-git/easyXray/archive/refs/heads/main.zip
         unzip main.zip
         mv team418-main/* .
         rm -rf team418-main main.zip
 		echo -e "\e[34m team418 repository has been cloned\e[0m"
     else
-        wget https://github.com/torikki-tou/team418/archive/refs/heads/main.zip
+        wget https://github.com/Team418-git/easyXray/archive/refs/heads/main.zip
         unzip main.zip
         mkdir -p team_418
         mv team418-main/* team_418/
