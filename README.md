@@ -16,7 +16,7 @@
 
 Скачиваем скрипт, делаем файл исполняемым и запускаем установку:
 
-    curl -sSL https://raw.githubusercontent.com/Team418-git/easyXray/ydmnsky/setup.sh -o setup.sh && chmod +x setup.sh && ./setup.sh
+    curl -sSL https://raw.githubusercontent.com/Team418-git/easyXray/main/setup.sh -o setup.sh && chmod +x setup.sh && ./setup.sh
 
 Скрипт запросит у вас:
 
