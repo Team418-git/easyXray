@@ -15,8 +15,8 @@ class Client:
         self.xui = XUIClient()
         return
 
-    def get_by_user(self, user_id: str, offset: int = 0, limit: int = 20) -> List[str]:
-        return [cnf.id for cnf in self.client_repo.get_by_user(user_id, offset, limit)]
+    def get_by_user(self, user_id: str) -> List[str]:
+        return [cnf.id for cnf in self.client_repo.get_by_user(user_id)]
 
     def get(self, client_id: str) -> Optional[ClientDTO]:
         db_client = self.client_repo.get(client_id)
@@ -50,9 +50,9 @@ class Client:
 
         return ClientDTO(**{'id': db_client.id, 'conn_str': conn_str})
 
-    def create(self, user_id: Optional[str] = None, comment: Optional[str] = None) -> str:
+    def create(self, user_id: str) -> str:
         client_id = self.xui.create_client(user_id)
-        self.client_repo.create(client_id, user_id, comment)
+        self.client_repo.create(client_id, user_id)
         return client_id
 
     def delete(self, client_id: str) -> bool:

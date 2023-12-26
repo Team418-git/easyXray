@@ -61,20 +61,13 @@ class EnvConfig:
 
         return self.__engine_password
 
-    def get_allow_chat_members(self, refresh: bool = False) -> bool:
-        if refresh:
-            self.__read_allow_chat_members()
-
-        return self.__allow_chat_members
-
     def __read_telegram_api_token(self):
         self.__telegram_api_token: str = (os.environ.get('TELEGRAM_API_TOKEN')
                                           or None)
 
     def __read_admins_ids(self):
         admins_ids: str = os.environ.get('') or ''
-        self.__admins_ids: List[str] = [admin_id.strip('@') for admin_id in
-                                        (admins_ids.split(',') or [])]
+        self.__admins_ids: List[str] = admins_ids.split(',') or []
 
     def __read_chat_ids(self):
         chat_ids: str = os.environ.get('') or ''
@@ -96,9 +89,6 @@ class EnvConfig:
 
     def __read_engine_password(self):
         self.__engine_password: str = os.environ.get('XUI_PASS') or 'admin'
-
-    def __read_allow_chat_members(self):
-        self.__allow_chat_members: bool = os.environ.get('ALLOW_CHAT_MEMBERS') or False
 
 
 env_config = EnvConfig()
