@@ -1,18 +1,21 @@
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.state import StatesGroup, State
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup, \
-    ReplyKeyboardRemove
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from src.logic import Admin, Client, User
-from src.presentation.callbacks import ClientCallback
+from src.logic import Client
 
 items_per_page = 7
 
 admin_menu = [
+    [InlineKeyboardButton(text="-----ADMIN PANEL-----")],
     [InlineKeyboardButton(text="➕ Добавить юзера", callback_data="add_client"),
      InlineKeyboardButton(text="❌ Удалить юзера", callback_data="delete_client")],
-    [InlineKeyboardButton(text="📃 Список юзеров", callback_data="user_list")]
+    [InlineKeyboardButton(text="📋 Список юзеров", callback_data="user_list")],
+    [InlineKeyboardButton(text="---------------------")],
+    [InlineKeyboardButton(text="📃 Мои конфигурации", callback_data="conf_list")],
+    [InlineKeyboardButton(text="🔧 Запросить конфигурацию", callback_data="create_config")],
+    [InlineKeyboardButton(text="🔍 Инструкции", callback_data="get_instructions")]
 ]
 
 client_menu = [
@@ -20,6 +23,7 @@ client_menu = [
     [InlineKeyboardButton(text="🔧 Запросить конфигурацию", callback_data="create_config")],
     [InlineKeyboardButton(text="🔍 Инструкции", callback_data="get_instructions")]
 ]
+
 instruction_menu = [
     [InlineKeyboardButton(text="iOS", callback_data="instruction_ios"),
      InlineKeyboardButton(text="Android", callback_data="instruction_android")],
@@ -27,6 +31,7 @@ instruction_menu = [
      InlineKeyboardButton(text="Windows", callback_data="instruction_windows")],
     [InlineKeyboardButton(text="◀️ Выйти в меню", callback_data="main_menu")]
 ]
+
 config_sub_menu = [
     [InlineKeyboardButton(text="Запросить URI", callback_data="get_config")],
     [InlineKeyboardButton(text="Удалить конфигурацию", callback_data="delete_config")],
