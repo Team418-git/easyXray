@@ -3,7 +3,7 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from src.logic import Client
+from src.logic import Client, User
 
 items_per_page = 7
 
@@ -25,11 +25,12 @@ client_menu = [
 ]
 
 instruction_menu = [
-    [InlineKeyboardButton(text="iOS", callback_data="instruction_ios"),
-     InlineKeyboardButton(text="Android", callback_data="instruction_android")],
-    [InlineKeyboardButton(text="MacOS", callback_data="instruction_macos"),
-     InlineKeyboardButton(text="Windows", callback_data="instruction_windows")],
-    [InlineKeyboardButton(text="◀️ Выйти в меню", callback_data="main_menu")]
+    [InlineKeyboardButton(text="iOS", url="https://telegra.ph/Instrukciya-dlya-iOS-01-11"),
+     InlineKeyboardButton(text="Android", url="https://telegra.ph/Instrukciya-dlya-Android-01-11")],
+    [InlineKeyboardButton(text="MacOS", url="https://telegra.ph/Instrukciya-dlya-MacOS-01-11"),
+     InlineKeyboardButton(text="Windows", url="https://telegra.ph/Instrukciya-dlya-Windows-01-11")],
+    [InlineKeyboardButton(text="Linux", url="https://telegra.ph/Instrukciya-dlya-Linux-Ubuntu-AppImage-01-11")],
+    [InlineKeyboardButton(text="◀️ Выйти в меню", url="main_menu")]
 ]
 
 config_sub_menu = [
@@ -53,8 +54,12 @@ user_sub_menu = InlineKeyboardMarkup(inline_keyboard=user_sub_menu)
 iexit_kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="◀️ Выйти в меню", callback_data="main_menu")]])
 
 
-class Pagination(StatesGroup):
+class TunnelPagination(StatesGroup):
     showing_items = State()
+
+#
+# class UsersPagination(StatesGroup):
+#     showing_items = State()
 
 
 class PageCallbackFactory(CallbackData, prefix="fabnum"):
@@ -80,7 +85,7 @@ async def get_page_keyboard(emails_on_page: list, page: int, total_pages: int):
     return builder.as_markup()
 
 
-async def show_items_page(clbck: PageCallbackFactory, page: int = 1):
+async def show_clients_pages(clbck: PageCallbackFactory, page: int = 1):
     user_id = clbck.from_user.id
     emails = Client().get_by_user(user_id)
     if len(emails) == 0:
@@ -92,3 +97,16 @@ async def show_items_page(clbck: PageCallbackFactory, page: int = 1):
     emails_on_page = emails[start:end]
     keyboard = await get_page_keyboard(emails_on_page, page, total_pages)
     await clbck.message.answer(text, reply_markup=keyboard)
+#
+#
+# async def show_users_pages(clbck: PageCallbackFactory, page: int = 1):
+#     users = User().get_all()
+#     if len(users) == 0:
+#         return await clbck.message.answer("Пока нет юзеров", reply_markup=iexit_kb)
+#     total_pages = len(users) // items_per_page + (len(users) % items_per_page > 0)
+#     text = f"Выберите пользователя, которому хотите обновить лимит:"
+#     start = (page - 1) * items_per_page
+#     end = start + items_per_page
+#     emails_on_page = users[start:end]
+#     keyboard = await get_page_keyboard(emails_on_page, page, total_pages)
+#     await clbck.message.answer(text, reply_markup=keyboard)

@@ -107,7 +107,7 @@ async def add_config(clbck: CallbackQuery):
 
 @router.callback_query(F.data == "conf_list")
 async def config_list(clbck: kb.PageCallbackFactory):
-    await kb.show_items_page(clbck)
+    await kb.show_clients_pages(clbck)
 
 
 @router.callback_query(kb.PageCallbackFactory.filter(F.action.in_(["prev", "next"])))
@@ -121,7 +121,7 @@ async def query_page(callback_query: kb.PageCallbackFactory, callback_data: kb.P
     else:
         page = current_page
     if page != current_page:
-        await kb.show_items_page(callback_query, page)
+        await kb.show_clients_pages(callback_query, page)
     else:
         await callback_query.answer('Вы уже на этой странице!')
 
