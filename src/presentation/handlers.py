@@ -39,7 +39,7 @@ async def menu_handler(clbck: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == "get_instructions")
 async def get_instructions(clbck: CallbackQuery):
-    await clbck.message.answer(text.instructions, reply_markup=kb.iexit_kb)
+    await clbck.message.answer(text.instructions, reply_markup=kb.instruction_menu)
 
 
 @router.callback_query(F.data == "add_client")
