@@ -30,7 +30,7 @@ instruction_menu = [
     [InlineKeyboardButton(text="MacOS", url="https://telegra.ph/Instrukciya-dlya-MacOS-01-11"),
      InlineKeyboardButton(text="Windows", url="https://telegra.ph/Instrukciya-dlya-Windows-01-11")],
     [InlineKeyboardButton(text="Linux", url="https://telegra.ph/Instrukciya-dlya-Linux-Ubuntu-AppImage-01-11")],
-    [InlineKeyboardButton(text="◀️ Выйти в меню", url="main_menu")]
+    [InlineKeyboardButton(text="◀️ Выйти в меню", callback_data="main_menu")]
 ]
 
 config_sub_menu = [
