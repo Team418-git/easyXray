@@ -8,11 +8,11 @@ from src.logic import Client, User
 items_per_page = 7
 
 admin_menu = [
-    [InlineKeyboardButton(text="-----ADMIN PANEL-----")],
+    [InlineKeyboardButton(text="-----ADMIN PANEL-----", callback_data="main_menu")],
     [InlineKeyboardButton(text="➕ Добавить юзера", callback_data="add_client"),
      InlineKeyboardButton(text="❌ Удалить юзера", callback_data="delete_client")],
     [InlineKeyboardButton(text="📋 Список юзеров", callback_data="user_list")],
-    [InlineKeyboardButton(text="---------------------")],
+    [InlineKeyboardButton(text="---------------------", callback_data="main_menu")],
     [InlineKeyboardButton(text="📃 Мои конфигурации", callback_data="conf_list")],
     [InlineKeyboardButton(text="🔧 Запросить конфигурацию", callback_data="create_config")],
     [InlineKeyboardButton(text="🔍 Инструкции", callback_data="get_instructions")]
