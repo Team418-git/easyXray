@@ -71,8 +71,6 @@ async def get_limit(msg: Message, state: FSMContext):
             tg_id = user_data['chosen_id']
             User().create(user_id=tg_id, limit=limit)
             await state.clear()
-			success_text = "Пользователь успешно добавлен."
-            await msg.answer(success_text)
 
 
 @router.callback_query(F.data == "delete_client")
