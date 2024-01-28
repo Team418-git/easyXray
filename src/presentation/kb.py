@@ -94,7 +94,7 @@ async def get_emails_page_keyboard(emails_on_page: list, page: int, total_pages:
 async def get_users_page_keyboard(users_on_page: list, page: int, total_pages: int):
     builder = InlineKeyboardBuilder()
     for user in users_on_page:
-        builder.row(InlineKeyboardButton(text=user, callback_data=EmailCallbackFactory(user=user).pack()))
+        builder.row(InlineKeyboardButton(text=user, callback_data=UserCallbackFactory(user=user).pack()))
     if total_pages != 1:
         builder.row(InlineKeyboardButton(text=f"{page}/{total_pages}", callback_data="ignore"))
     if page > 1:
