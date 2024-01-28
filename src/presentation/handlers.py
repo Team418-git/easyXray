@@ -107,7 +107,7 @@ async def add_config(clbck: CallbackQuery):
 
 
 @router.callback_query(F.data == "conf_list")
-async def config_list(clbck: kb.PageCallbackFactory):
+async def config_list(clbck: kb.EmailPageCallbackFactory):
     await kb.show_clients_pages(clbck)
 
 
@@ -137,7 +137,7 @@ async def delete_config(clbck: CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(F.data == "user_list")
-async def config_list(clbck: kb.PageCallbackFactory):
+async def config_list(clbck: kb.EmailPageCallbackFactory):
     await kb.show_users_pages(clbck)
 
 
@@ -167,8 +167,24 @@ async def delete_user(clbck: CallbackQuery, state: FSMContext):
     await clbck.message.answer("Пользователь удалён", reply_markup=kb.iexit_kb)
 
 
-@router.callback_query(kb.PageCallbackFactory.filter(F.action.in_(["prev", "next"])))
-async def query_page(callback_query: kb.PageCallbackFactory, callback_data: kb.PageCallbackFactory):
+@router.callback_query(kb.EmailPageCallbackFactory.filter(F.action.in_(["prev", "next"])))
+async def query_email_page(callback_query: kb.EmailPageCallbackFactory, callback_data: kb.EmailPageCallbackFactory):
+    current_page = int(callback_data.page)
+    action = callback_data.action
+    if action == "prev":
+        page = current_page - 1
+    elif action == "next":
+        page = current_page + 1
+    else:
+        page = current_page
+    if page != current_page:
+        await kb.show_clients_pages(callback_query, page)
+    else:
+        await callback_query.answer('Вы уже на этой странице!')
+
+
+@router.callback_query(kb.UserPageCallbackFactory.filter(F.action.in_(["prev", "next"])))
+async def query_user_page(callback_query: kb.UserPageCallbackFactory, callback_data: kb.UserPageCallbackFactory):
     current_page = int(callback_data.page)
     action = callback_data.action
     if action == "prev":
