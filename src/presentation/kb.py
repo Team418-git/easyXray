@@ -64,7 +64,12 @@ class TunnelPagination(StatesGroup):
 #     showing_items = State()
 
 
-class PageCallbackFactory(CallbackData, prefix="fabnum"):
+class EmailPageCallbackFactory(CallbackData, prefix="fabnum_email"):
+    action: str
+    page: int
+
+
+class UserPageCallbackFactory(CallbackData, prefix="fabnum_user"):
     action: str
     page: int
 
@@ -84,9 +89,9 @@ async def get_emails_page_keyboard(emails_on_page: list, page: int, total_pages:
     if total_pages != 1:
         builder.row(InlineKeyboardButton(text=f"{page}/{total_pages}", callback_data="ignore"))
     if page > 1:
-        builder.add(InlineKeyboardButton(text="<<", callback_data=PageCallbackFactory(action="prev", page=page).pack()))
+        builder.add(InlineKeyboardButton(text="<<", callback_data=EmailPageCallbackFactory(action="prev", page=page).pack()))
     if page < total_pages:
-        builder.add(InlineKeyboardButton(text=">>", callback_data=PageCallbackFactory(action="next", page=page).pack()))
+        builder.add(InlineKeyboardButton(text=">>", callback_data=EmailPageCallbackFactory(action="next", page=page).pack()))
     builder.row(InlineKeyboardButton(text="◀️ Выйти в меню", callback_data="main_menu"))
     return builder.as_markup()
 
@@ -98,14 +103,14 @@ async def get_users_page_keyboard(users_on_page: list, page: int, total_pages: i
     if total_pages != 1:
         builder.row(InlineKeyboardButton(text=f"{page}/{total_pages}", callback_data="ignore"))
     if page > 1:
-        builder.add(InlineKeyboardButton(text="<<", callback_data=PageCallbackFactory(action="prev", page=page).pack()))
+        builder.add(InlineKeyboardButton(text="<<", callback_data=UserPageCallbackFactory(action="prev", page=page).pack()))
     if page < total_pages:
-        builder.add(InlineKeyboardButton(text=">>", callback_data=PageCallbackFactory(action="next", page=page).pack()))
+        builder.add(InlineKeyboardButton(text=">>", callback_data=UserPageCallbackFactory(action="next", page=page).pack()))
     builder.row(InlineKeyboardButton(text="◀️ Выйти в меню", callback_data="main_menu"))
     return builder.as_markup()
 
 
-async def show_clients_pages(clbck: PageCallbackFactory, page: int = 1):
+async def show_clients_pages(clbck: EmailPageCallbackFactory, page: int = 1):
     user_id = clbck.from_user.username
     emails = Client().get_by_user(user_id)
     if len(emails) == 0:
@@ -119,7 +124,7 @@ async def show_clients_pages(clbck: PageCallbackFactory, page: int = 1):
     await clbck.message.answer(text, reply_markup=keyboard)
 
 
-async def show_users_pages(clbck: PageCallbackFactory, page: int = 1):
+async def show_users_pages(clbck: UserPageCallbackFactory, page: int = 1):
     users = [user.id for user in User().get_all()]
     if len(users) == 0:
         return await clbck.message.answer("Пока нет юзеров", reply_markup=iexit_kb)
