@@ -20,3 +20,7 @@ class DelConf(StatesGroup):
 
 class ConfMenu(StatesGroup):
     choosing_action = State()
+
+
+class UserMenu(StatesGroup):
+    choosing_action = State()

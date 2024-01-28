@@ -12,7 +12,7 @@ from aiogram import flags
 import src.presentation.kb as kb
 import src.presentation.text as text
 from src.presentation.callbacks import ClientCallback
-from src.presentation.states import Gen, Del, GenConf, DelConf, ConfMenu
+from src.presentation.states import Gen, Del, GenConf, DelConf, ConfMenu, UserMenu
 
 router = Router()
 admin_id = getenv("ADMIN_TELEGRAM_ID")
@@ -70,6 +70,7 @@ async def get_limit(msg: Message, state: FSMContext):
             user_data = await state.get_data()
             tg_id = user_data['chosen_id']
             User().create(user_id=tg_id, limit=limit)
+            await msg.answer("Пользователь успешно добавлен")
             await state.clear()
 
 
@@ -108,6 +109,62 @@ async def add_config(clbck: CallbackQuery):
 @router.callback_query(F.data == "conf_list")
 async def config_list(clbck: kb.PageCallbackFactory):
     await kb.show_clients_pages(clbck)
+
+
+@router.callback_query(kb.EmailCallbackFactory.filter())
+async def client_choosing(callback_query: CallbackQuery, callback_data: kb.EmailCallbackFactory,
+                                     state: FSMContext):
+    email = callback_data.email
+    await state.update_data(email=email)
+    await state.set_state(ConfMenu.choosing_action)
+    await callback_query.message.edit_text(f"Выберите действие, которое вы хотите совершить с туннелем {email}",
+                                           kb.config_sub_menu)
+
+
+@router.callback_query(F.data == "get_config")
+async def get_config(clbck: CallbackQuery, state: FSMContext):
+    email = await state.get_data()
+    email = email['email']
+    await clbck.message.answer(Client().get(email).conn_str, kb.iexit_kb)
+
+
+@router.callback_query(F.data == "delete_config")
+async def delete_config(clbck: CallbackQuery, state: FSMContext):
+    email = await state.get_data()
+    email = email['email']
+    Client().delete(email)
+    await clbck.message.answer("Клиент удалён", kb.iexit_kb)
+
+
+@router.callback_query(F.data == "user_list")
+async def config_list(clbck: kb.PageCallbackFactory):
+    await kb.show_users_pages(clbck)
+
+
+@router.callback_query(kb.UserCallbackFactory.filter())
+async def client_choosing(callback_query: CallbackQuery, callback_data: kb.UserCallbackFactory,
+                                     state: FSMContext):
+    user = callback_data.user
+    await state.update_data(user=user)
+    await state.set_state(UserMenu.choosing_action)
+    await callback_query.message.edit_text(f"Выберите действие, которое вы хотите совершить с пользователем {user}",
+                                           kb.config_sub_menu)
+
+
+@router.callback_query(F.data == "change_limit")
+async def change_limit(clbck: CallbackQuery, state: FSMContext):
+    user = await state.get_data()
+    user = user['user']
+    User().get(user).limit = 10  # TODO
+    await clbck.message.answer("Новый лимит - 10 (доделать)", kb.iexit_kb)
+
+
+@router.callback_query(F.data == "delete_user")
+async def delete_user(clbck: CallbackQuery, state: FSMContext):
+    user = await state.get_data()
+    user = user['email']
+    User().delete(user)
+    await clbck.message.answer("Пользователь удалён", kb.iexit_kb)
 
 
 @router.callback_query(kb.PageCallbackFactory.filter(F.action.in_(["prev", "next"])))

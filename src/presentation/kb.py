@@ -51,11 +51,13 @@ instruction_menu = InlineKeyboardMarkup(inline_keyboard=instruction_menu)
 config_sub_menu = InlineKeyboardMarkup(inline_keyboard=config_sub_menu)
 user_sub_menu = InlineKeyboardMarkup(inline_keyboard=user_sub_menu)
 
-iexit_kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="◀️ Выйти в меню", callback_data="main_menu")]])
+iexit_kb = InlineKeyboardMarkup(
+    inline_keyboard=[[InlineKeyboardButton(text="◀️ Выйти в меню", callback_data="main_menu")]])
 
 
 class TunnelPagination(StatesGroup):
     showing_items = State()
+
 
 #
 # class UsersPagination(StatesGroup):
@@ -71,7 +73,11 @@ class EmailCallbackFactory(CallbackData, prefix="fabemail"):
     email: str
 
 
-async def get_page_keyboard(emails_on_page: list, page: int, total_pages: int):
+class UserCallbackFactory(CallbackData, prefix="fabuser"):
+    user: str
+
+
+async def get_emails_page_keyboard(emails_on_page: list, page: int, total_pages: int):
     builder = InlineKeyboardBuilder()
     for email in emails_on_page:
         builder.row(InlineKeyboardButton(text=email, callback_data=EmailCallbackFactory(email=email).pack()))
@@ -85,8 +91,22 @@ async def get_page_keyboard(emails_on_page: list, page: int, total_pages: int):
     return builder.as_markup()
 
 
+async def get_users_page_keyboard(users_on_page: list, page: int, total_pages: int):
+    builder = InlineKeyboardBuilder()
+    for user in users_on_page:
+        builder.row(InlineKeyboardButton(text=user, callback_data=EmailCallbackFactory(user=user).pack()))
+    if total_pages != 1:
+        builder.row(InlineKeyboardButton(text=f"{page}/{total_pages}", callback_data="ignore"))
+    if page > 1:
+        builder.add(InlineKeyboardButton(text="<<", callback_data=PageCallbackFactory(action="prev", page=page).pack()))
+    if page < total_pages:
+        builder.add(InlineKeyboardButton(text=">>", callback_data=PageCallbackFactory(action="next", page=page).pack()))
+    builder.row(InlineKeyboardButton(text="◀️ Выйти в меню", callback_data="main_menu"))
+    return builder.as_markup()
+
+
 async def show_clients_pages(clbck: PageCallbackFactory, page: int = 1):
-    user_id = clbck.from_user.id
+    user_id = clbck.from_user.username
     emails = Client().get_by_user(user_id)
     if len(emails) == 0:
         return await clbck.message.answer("У вас пока нет туннелей", reply_markup=iexit_kb)
@@ -95,18 +115,18 @@ async def show_clients_pages(clbck: PageCallbackFactory, page: int = 1):
     start = (page - 1) * items_per_page
     end = start + items_per_page
     emails_on_page = emails[start:end]
-    keyboard = await get_page_keyboard(emails_on_page, page, total_pages)
+    keyboard = await get_emails_page_keyboard(emails_on_page, page, total_pages)
     await clbck.message.answer(text, reply_markup=keyboard)
-#
-#
-# async def show_users_pages(clbck: PageCallbackFactory, page: int = 1):
-#     users = User().get_all()
-#     if len(users) == 0:
-#         return await clbck.message.answer("Пока нет юзеров", reply_markup=iexit_kb)
-#     total_pages = len(users) // items_per_page + (len(users) % items_per_page > 0)
-#     text = f"Выберите пользователя, которому хотите обновить лимит:"
-#     start = (page - 1) * items_per_page
-#     end = start + items_per_page
-#     emails_on_page = users[start:end]
-#     keyboard = await get_page_keyboard(emails_on_page, page, total_pages)
-#     await clbck.message.answer(text, reply_markup=keyboard)
+
+
+async def show_users_pages(clbck: PageCallbackFactory, page: int = 1):
+    users = [user.id for user in User().get_all()]
+    if len(users) == 0:
+        return await clbck.message.answer("Пока нет юзеров", reply_markup=iexit_kb)
+    total_pages = len(users) // items_per_page + (len(users) % items_per_page > 0)
+    text = f"Выберите пользователя, которому хотите обновить лимит:"
+    start = (page - 1) * items_per_page
+    end = start + items_per_page
+    emails_on_page = users[start:end]
+    keyboard = await get_users_page_keyboard(emails_on_page, page, total_pages)
+    await clbck.message.answer(text, reply_markup=keyboard)
