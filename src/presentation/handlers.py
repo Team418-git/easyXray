@@ -81,15 +81,16 @@ async def add_client(clbck: CallbackQuery, state: FSMContext):
         await state.set_state(Del().typing_telegram_id)
 
 
-@router.message(Gen.typing_telegram_id)
+@router.message(Del.typing_telegram_id)
 async def delete_telegram_id(msg: Message, state: FSMContext):
     if msg.from_user.username == admin_id:
         tg_id = msg.text
-        if not tg_id.isnumeric() or len(tg_id) != 9:
+        if not tg_id.isnumeric():
             await state.clear()
             return await msg.answer(text.telegram_id_error, reply_markup=kb.iexit_kb)
         else:
             User().delete(user_id=tg_id)
+            await msg.answer("Пользователь успешно удален", reply_markup=kb.iexit_kb)
             await state.clear()
 
 
@@ -159,13 +160,13 @@ async def change_limit(clbck: CallbackQuery, state: FSMContext):
     await clbck.message.answer("Новый лимит - 10 (доделать)", reply_markup=kb.iexit_kb)
 
 
-@router.callback_query(F.data == "delete_user")
-async def delete_user(clbck: CallbackQuery, state: FSMContext):
-    user = await state.get_data()
-    user = user['email']
-    User().delete(user)
-    await clbck.message.answer("Пользователь удалён", reply_markup=kb.iexit_kb)
-
+# @router.callback_query(F.data == "delete_user")
+# async def delete_user(clbck: CallbackQuery, state: FSMContext):
+#     user = await state.get_data()
+#     user = user['email']
+#     User().delete(user)
+#     await clbck.message.answer("Пользователь удалён", reply_markup=kb.iexit_kb)
+#
 
 @router.callback_query(kb.EmailPageCallbackFactory.filter(F.action.in_(["prev", "next"])))
 async def query_email_page(callback_query: kb.EmailPageCallbackFactory, callback_data: kb.EmailPageCallbackFactory):

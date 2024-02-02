@@ -26,7 +26,7 @@ client_limit_await = """
 """
 
 telegram_id_error = """
-Ошибка! Введен некорректный Telegram ID.
+Ошибка! Введен некорректный Telegram username.
 Чтобы вернуться, нажмите на кнопку ниже.
 """
 
