@@ -85,11 +85,12 @@ async def add_client(clbck: CallbackQuery, state: FSMContext):
 async def delete_telegram_id(msg: Message, state: FSMContext):
     if msg.from_user.username == admin_id:
         tg_id = msg.text
-        if not tg_id.isnumeric():
+        if not tg_id.isalnum():
             await state.clear()
             return await msg.answer(text.telegram_id_error, reply_markup=kb.iexit_kb)
         else:
-            User().delete(user_id=tg_id)
+            user_id = Use()
+            user = User().delete()
             await msg.answer("Пользователь успешно удален", reply_markup=kb.iexit_kb)
             await state.clear()
 
