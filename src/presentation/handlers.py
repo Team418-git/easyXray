@@ -89,8 +89,7 @@ async def delete_telegram_id(msg: Message, state: FSMContext):
             await state.clear()
             return await msg.answer(text.telegram_id_error, reply_markup=kb.iexit_kb)
         else:
-            user_id = Use()
-            user = User().delete()
+            User().delete(user_id=tg_id)
             await msg.answer("Пользователь успешно удален", reply_markup=kb.iexit_kb)
             await state.clear()
 
