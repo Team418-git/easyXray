@@ -75,7 +75,7 @@ async def get_limit(msg: Message, state: FSMContext):
 
 
 @router.callback_query(F.data == "delete_client")
-async def add_client(clbck: CallbackQuery, state: FSMContext):
+async def delete_client(clbck: CallbackQuery, state: FSMContext):
     if clbck.from_user.username == admin_id:
         await clbck.message.answer(text.client_id_await, reply_markup=kb.iexit_kb)
         await state.set_state(Del().typing_telegram_id)
@@ -85,13 +85,15 @@ async def add_client(clbck: CallbackQuery, state: FSMContext):
 async def delete_telegram_id(msg: Message, state: FSMContext):
     if msg.from_user.username == admin_id:
         tg_id = msg.text
-        if not tg_id.isalnum():
-            await state.clear()
-            return await msg.answer(text.telegram_id_error, reply_markup=kb.iexit_kb)
-        else:
+
+        try:
             User().delete(user_id=tg_id)
             await msg.answer("Пользователь успешно удален", reply_markup=kb.iexit_kb)
             await state.clear()
+        except:
+            await state.clear()
+            return await msg.answer(text.telegram_id_error, reply_markup=kb.iexit_kb)
+
 
 
 @router.callback_query(F.data == "create_config")
