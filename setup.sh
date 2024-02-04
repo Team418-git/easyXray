@@ -75,7 +75,7 @@ function check_inbounds_table() {
     if [[ -f "$db_path" ]]; then
         table_exists=$(sqlite3 "$db_path" "SELECT name FROM sqlite_master WHERE type='table' AND name='inbounds';")
         if [[ $table_exists == "inbounds" ]]; then
-            read -p "The 'inbounds' table already exists. On first run it's empty, you can safely continue. Do you want to overwrite existing 3X-UI config? (y/n): " response
+            read -p "The 'inbounds' table already exists. On first run it's empty, you can safely continue. Do you want to overwrite existing 3X-UI config? (Y/n): " response
             if [[ $response == "y" ]]; then
                 ./inbounds_gen.sh
 		sqlite3 $db_path < inbounds.sql
@@ -130,7 +130,7 @@ check_sqlite3
 echo -e "Checking for Docker packages installed...."
 check_docker
 if [[ $? -ne 0 ]]; then
-    read -p "Docker components are missing, would you like to install them? (y/n) (If not, you would have to install them manually) : " response
+    read -p "Docker components are missing, would you like to install them? (Y/n) (If not, you would have to install them manually) : " response
     if [[ $response == "y" ]]; then
         install_docker
 		echo -e "\e[34mDocker packages were installed\e[0m"
@@ -170,7 +170,7 @@ function check_all_variables() {
 
 # Check if all variables exist in .env
 if check_all_variables; then
-    read -p "Variables already exist in .env. Do you want to reinstall admin panel from scratch? (y/n): " response
+    read -p "Variables already exist in .env. Do you want to reinstall admin panel from scratch? (y/N): " response
     if [[ $response != "y" ]]; then
         echo "Aborting."
         exit 0
@@ -192,7 +192,7 @@ read -p "Enter port on which 3X-UI web admin panel would be available: " config_
 read -p "Enter your hostname (IP or Domain):" hostname_input
 read -p "Enter your e-mail for certificate :" email_input
 read -p "Enter your Telegram bot API token (use Tg BotFather):" tgtoken_input
-read -p "Enter your Telegram admin profile (as @admin without @):" tgadminid_input
+read -p "Enter your Telegram admin profile (as @user134 but without @ - user134):" tgadminid_input
 
 #Export variables to docker-compose
 export XUI_USERNAME=$usernameTemp
