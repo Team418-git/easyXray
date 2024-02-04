@@ -1,8 +1,8 @@
 ![](https://telegra.ph/file/1e82726556d321d84e2b6.png)
-# Установка контейнера 3X-UI + Traefik + Telegram Bot
+# Установка контейнера easyXray (3X-UI + Traefik + Telegram Bot)
 Инструкция будет включать в себя:
 
-1.  Установка контейнера 3X-UI + Traefik + Telegram Bot
+1.  Установка контейнера easyXray (3X-UI + Traefik + Telegram Bot)
 2.  Настройка
 
 Для установки понадобится:
