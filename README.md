@@ -15,7 +15,7 @@
 
 Официальный репозиторий форка X-UI: [https://github.com/alireza0/x-ui](https://github.com/alireza0/x-ui)
 
-Traefik (используется для выпуска сертификатов и проксирования через HTTPS админской панели 3X-UI) [https://github.com/traefik/traefik](https://github.com/traefik/traefik)
+[Traefik](https://github.com/traefik/traefik) (используется для выпуска сертификатов и проксирования через HTTPS админской панели 3X-UI) 
 
 Скачиваем скрипт, делаем файл исполняемым и запускаем установку:
 
