@@ -76,7 +76,7 @@ function check_inbounds_table() {
         table_exists=$(sqlite3 "$db_path" "SELECT name FROM sqlite_master WHERE type='table' AND name='inbounds';")
         if [[ $table_exists == "inbounds" ]]; then
             read -p "The 'inbounds' table already exists. On first run it's empty, you can safely continue. Do you want to overwrite existing 3X-UI config? (Y/n): " response
-            if [[ $response == "y" ]]; then
+            if [[ ${response,,} == "y" ]]; then
                 ./inbounds_gen.sh
 		sqlite3 $db_path < inbounds.sql
                 echo -e "\e[34mAdded XTLS-Reality config entry into x-ui.db database\e[0m"
@@ -131,7 +131,7 @@ echo -e "Checking for Docker packages installed...."
 check_docker
 if [[ $? -ne 0 ]]; then
     read -p "Docker components are missing, would you like to install them? (Y/n) (If not, you would have to install them manually) : " response
-    if [[ $response == "y" ]]; then
+    if [[ ${response,,} == "y" ]]; then
         install_docker
 		echo -e "\e[34mDocker packages were installed\e[0m"
     else
@@ -171,7 +171,7 @@ function check_all_variables() {
 # Check if all variables exist in .env
 if check_all_variables; then
     read -p "Variables already exist in .env. Do you want to reinstall admin panel from scratch? (y/N): " response
-    if [[ $response != "y" ]]; then
+    if [[ ${response,,} == "y" ]]; then
         echo "Aborting."
         exit 0
     fi
