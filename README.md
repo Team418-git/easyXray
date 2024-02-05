@@ -90,7 +90,7 @@ Flow - xtls-rprx-vision
 Общий расход - ограничение расхода (при превышении необходимо будет сбросить счетчик трафика)    
 Срок действия конфигурации (Дата окончания) - дата истечения конфигурации (будет деактивирована, но не удалена)    
 ![](https://telegra.ph/file/e97259146bedf9ce7394c.png)      
-  по значку QR - отобразить QR Код для подключения, который можно отсканировать камерой в мобильных клиентах ([v2rayNG](https://github.com/2dust/v2rayNG/releases) или [Nekobox](https://github.com/MatsuriDayo/NekoBoxForAndroid/releases) на Android, [Wings X](https://apps.apple.com/us/app/wings-x/id6446119727)/[FoXray](https://apps.apple.com/us/app/foxray/id6448898396) или [Shadowrocket](https://apps.apple.com/us/app/shadowrocket/id932747118) на iOS)
+  по значку QR - отобразить QR Код для подключения, который можно отсканировать камерой в мобильных клиентах ([Hiddify Next](https://github.com/hiddify/hiddify-next), [v2rayNG](https://github.com/2dust/v2rayNG/releases) или [Nekobox](https://github.com/MatsuriDayo/NekoBoxForAndroid/releases) на Android, [Wings X](https://apps.apple.com/us/app/wings-x/id6446119727)/[FoXray](https://apps.apple.com/us/app/foxray/id6448898396) или [Shadowrocket](https://apps.apple.com/us/app/shadowrocket/id932747118) на iOS)
 ![](https://telegra.ph/file/9120e5869e7e5dd352357.png)      
 по значку I (info) - информация о подключении и ссылка на конфиг (vless://)    
 
